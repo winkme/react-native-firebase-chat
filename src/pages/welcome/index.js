@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
+import Geolocation from 'react-native-geolocation-service';
+import Permissions from 'react-native-permissions';
 import {
     View,
     Text,
@@ -8,35 +10,67 @@ import {
 
 import styles from './styles';
 
-const Welcome = () => (
-    <View style={styles.container}>
-        <Text style={styles.title}>
-            Bem vindo!
-        </Text>
-        <Text style={styles.text}>
-            Entre com o apelido que desejar!
-        </Text>
+export default class Welcome extends Component {
+    static navigationOptions = {
+        header: null,
+    };
 
-        <View style={styles.form}>
-            <TextInput
-                style={styles.input}
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="Apelido"
-                underlineColorAndroid="rgba(0, 0, 0, 0)"
-            />
+    state = {
+        position: 'aguardando...',
+    };
 
-            <TouchableOpacity style={styles.button} onPress={() => {}}>
-                <Text style={styles.buttonText}>
-                    Entrar
+    componentDidMount() {
+        this.setState({ position: 'iniciando busca...' });
+        this.gpsInit();
+    }
+
+    gpsInit = async () => {
+        console.tron.log('Permissions', Permissions);
+        Permissions.request('location').then((response) => {
+            if (response === 'authorized') {
+                Geolocation.watchPosition((position) => {
+                    this.setState({ position: position });
+                    console.tron.log(position);
+                }, (error) => {
+                    // See error code charts below.
+                    console.tron.log(error.code, error.message);
+                }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter: 0 });
+            } else {
+                console.tron.log("GPS permission denied");
+            }
+        });
+    };
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.title}>
+                    Bem vindo!
                 </Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-);
+                <Text style={styles.text}>
+                    Entre com o apelido que desejar!
+                </Text>
 
-Welcome.navigationOptions = {
-    header: null,
-};
+                <View style={styles.form}>
+                    <TextInput
+                        style={styles.input}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        placeholder="Apelido"
+                        underlineColorAndroid="rgba(0, 0, 0, 0)"
+                    />
 
-export default Welcome;
+                    <TouchableOpacity style={styles.button} onPress={() => {}}>
+                        <Text style={styles.buttonText}>
+                            Entrar
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                <Text style={styles.text}>
+                    {this.state.position.coords ? `${this.state.position.coords.latitude}, ${this.state.position.coords.longitude}` : 'buscando gps...'}
+                </Text>
+            </View>
+        );
+    }
+}
