@@ -11,6 +11,8 @@
     "prop-types": "^15.6.2",
     "react": "16.4.1",
     "react-native": "0.56.0",
+    "react-native-geolocation-service": "^1.1.0",
+    "react-native-permissions": "^1.1.1",
     "react-navigation": "1.5.2",
     "reactotron-react-native": "^2.0.0"
   },

@@ -27,6 +27,7 @@
         "react/jsx-indent": [2, 4],
         "react/jsx-indent-props": [2, 4],
         "global-require": "off",
+        "import/no-unresolved": "off",
         "no-console": "off",
         "import/prefer-default-export": "off",
         "no-unused-vars": [
